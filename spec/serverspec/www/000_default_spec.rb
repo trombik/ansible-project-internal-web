@@ -16,3 +16,8 @@ describe file "/etc/resolv.conf" do
   it { should be_file }
   its(:content) { should match(/^search #{domain_name}$/) }
 end
+
+describe command "ftp -o /dev/null -d http://localhost/" do
+  its(:exit_status) { should_not eq 0 }
+  its(:stdout) { should match(/^ftp: Error retrieving file: 410 Gone/) }
+end

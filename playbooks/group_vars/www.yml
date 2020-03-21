@@ -15,3 +15,28 @@ pf_rule: |
   pass quick proto udp from any to any port { bootpc, bootps }
   # pass HTTP(S)
   pass quick proto {tcp, udp} from any to self port { http, https }
+
+httpd_openbsd_log_directories:
+  - path: /var/log/www
+    owner: root
+    group: www
+    mode: 0755
+    state: present
+httpd_openbsd_config: |
+  prefork 1
+  chroot "/var/www"
+  logdir "{{ httpd_openbsd_log_directories[0]['path'] }}"
+
+  # defaults to 410 Gone
+  server "default" {
+    listen on "*" port 80
+    block return 410
+  }
+
+  server "doc" {
+    listen on "*" port 80
+    root "doc"
+  }
+  types {
+    include "/usr/share/misc/mime.types"
+  }
