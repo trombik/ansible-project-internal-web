@@ -21,3 +21,16 @@ describe command "ftp -o /dev/null -d http://localhost/" do
   its(:exit_status) { should_not eq 0 }
   its(:stdout) { should match(/^ftp: Error retrieving file: 410 Gone/) }
 end
+
+describe user "trombik" do
+  it { should exist }
+  it { should belong_to_primary_group 'wheel' }
+  it { should belong_to_group 'dialer' }
+  it { should have_login_shell "/usr/local/bin/zsh" }
+end
+
+describe file "/home/trombik/.ssh/authorized_keys" do
+  it { should exist }
+  its(:content) { should match(/^ssh-rsa /) }
+  its(:content) { should match(/y@trombik.org$/) }
+end
