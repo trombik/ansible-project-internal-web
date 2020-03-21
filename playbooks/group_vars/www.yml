@@ -1,0 +1,17 @@
+---
+
+pf_rule: |
+  block return
+  # pass SSH to me
+  pass quick proto tcp from any to self port ssh
+  # pass lo
+  pass quick on lo all
+  # pass all ICMPs
+  pass quick inet  proto icmp  from any to self
+  pass quick inet6 proto icmp6 from any to self
+  # pass all packets from me
+  pass quick from self to any
+  # pass DHCP
+  pass quick proto udp from any to any port { bootpc, bootps }
+  # pass HTTP(S)
+  pass quick proto {tcp, udp} from any to self port { http, https }

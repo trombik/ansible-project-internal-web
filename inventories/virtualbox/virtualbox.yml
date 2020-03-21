@@ -1,0 +1,21 @@
+---
+all:
+  hosts:
+    nex1.i.trombik.org:
+      vagrant_priority: 20
+      ansible_host: 172.16.100.254
+      vagrant_box: trombik/ansible-openbsd-6.6-amd64
+      ansible_python_interpreter: /usr/local/bin/python3
+  children:
+    www:
+      hosts:
+        nex1.i.trombik.org:
+    virtualbox-www:
+      children:
+        www:
+    virtualbox-credentials:
+      children:
+        www:
+    virtualbox:
+      children:
+        www:

@@ -1,0 +1,20 @@
+---
+- hosts:
+  - virtualbox-www
+  - prod-www
+  become: yes
+  become_user: root
+  environment:
+    http_proxy: "{{ http_proxy | default() }}"
+    https_proxy: "{{ https_proxy | default() }}"
+    no_proxy: "{{ no_proxy | default() }}"
+  pre_tasks:
+    - debug: var=hostvars[inventory_hostname]
+  roles:
+    - trombik.hostname
+    - trombik.localtime
+    - trombik.hosts
+    - trombik.pf
+    - trombik.vim
+    - trombik.zsh
+    - trombik.git
