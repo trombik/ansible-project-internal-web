@@ -1,0 +1,6 @@
+---
+
+- name: Install jekyll_extra_packages
+  openbsd_pkg:
+    name: "{{ jekyll_extra_packages }}"
+    state: present

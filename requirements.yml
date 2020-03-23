@@ -14,3 +14,8 @@
 - name: trombik.pf
   version: 1.1.0
 - name: trombik.httpd-openbsd
+- name: trombik.language_ruby
+- name: trombik.jekyll
+  src: git@github.com:trombik/ansible-role-jekyll.git
+  version: master
+  scm: git
