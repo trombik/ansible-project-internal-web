@@ -33,10 +33,24 @@ httpd_openbsd_config: |
     block return 410
   }
 
-  server "doc" {
+  server "demo.i.trombik.org" {
     listen on "*" port 80
-    root "doc"
+    root "htdocs/sites/demo"
   }
   types {
     include "/usr/share/misc/mime.types"
   }
+
+jekyll_user: trombik
+jekyll_bundler_bin: "bundle{{ language_ruby_version.short }}"
+jekyll_repositories:
+  - name: demo
+    module: git
+    config:
+      repo: https://github.com/trombik/startbootstrap-coming-soon.git
+      dest: /var/www/htdocs/sites/demo
+      version: demo_bundler_1_2
+    bundler:
+      deployment_mode: no
+      user_install: yes
+      extra_args: --path $HOME/.gem

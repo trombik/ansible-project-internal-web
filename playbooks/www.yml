@@ -19,4 +19,7 @@
     - trombik.zsh
     - trombik.git
     - users
+    - jekyll_directory
     - trombik.httpd-openbsd
+    - trombik.language_ruby
+    - trombik.jekyll
