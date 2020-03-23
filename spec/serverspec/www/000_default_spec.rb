@@ -24,8 +24,8 @@ end
 
 describe user "trombik" do
   it { should exist }
-  it { should belong_to_primary_group 'wheel' }
-  it { should belong_to_group 'dialer' }
+  it { should belong_to_primary_group "wheel" }
+  it { should belong_to_group "dialer" }
   it { should have_login_shell "/usr/local/bin/zsh" }
 end
 
@@ -33,4 +33,15 @@ describe file "/home/trombik/.ssh/authorized_keys" do
   it { should exist }
   its(:content) { should match(/^ssh-rsa /) }
   its(:content) { should match(/y@trombik.org$/) }
+end
+
+describe file "/var/www/htdocs/sites" do
+  it { should be_directory }
+  it { should be_owned_by "trombik" }
+  it { should be_grouped_into "www" }
+  it { should be_mode 755 }
+end
+
+describe command "curl --output - -q -H 'Host: demo.i.trombik.org' http://127.0.0.1" do
+  its(:stdout) { should match(/<title>Coming Soon - Start Bootstrap Theme/) }
 end
