@@ -43,5 +43,5 @@ describe file "/var/www/htdocs/sites" do
 end
 
 describe command "curl --output - -q -H 'Host: demo.i.trombik.org' http://127.0.0.1" do
-  its(:stdout) { should match(/<title>Coming Soon - Start Bootstrap Theme/) }
+  its(:stdout) { should match(%r{Makers Guesthouse Portal</title>}) }
 end

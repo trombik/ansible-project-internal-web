@@ -35,7 +35,7 @@ httpd_openbsd_config: |
 
   server "demo.i.trombik.org" {
     listen on "*" port 80
-    root "htdocs/sites/demo"
+    root "htdocs/sites/demo/_site"
   }
   types {
     include "/usr/share/misc/mime.types"
@@ -47,10 +47,13 @@ jekyll_repositories:
   - name: demo
     module: git
     config:
-      repo: https://github.com/trombik/startbootstrap-coming-soon.git
+      repo: https://github.com/trombik/jekyll-site-info.i.mkrsgh.org
       dest: /var/www/htdocs/sites/demo
-      version: demo_bundler_1_2
+      version: devel
+      force: yes
+      update: yes
+      state: latest
     bundler:
-      deployment_mode: no
+      deployment_mode: yes
       user_install: yes
       extra_args: --path $HOME/.gem
