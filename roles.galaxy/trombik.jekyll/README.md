@@ -17,7 +17,6 @@
 | `jekyll_user` | User name of `jekyll` site owner | `""` |
 | `jekyll_repositories` | See below | `[]` |
 | `jekyll_extra_packages` | List of extra packages to install | `[]` |
-| `jekyll_bundler_bin` | `bundler` command to run | `{{ __jekyll_bundler_bin }}` |
 
 ## `jekyll_repositories`
 
@@ -27,8 +26,15 @@ This is a list of dict. Each element of the list describes a site.
 |-----|-------------|------------|
 | `name` | Name of the site | No |
 | `module` | `ansible` module name to checkout the site (currently, only `git` is supported) | Yes |
-| `config` | Passed to  the `ansible` module | Yes |
+| `config` | a dict, passed to  the `ansible` module | Yes |
 | `bundler` | a dict of `bundler` module arguments | No |
+| `state` | Either `present` or `absent`, default is `present` | No |
+
+In addition, `config` key must have the following keys:
+
+| Key    | Description                |
+|--------|----------------------------|
+| `dest` | The path to the repository |
 
 ```
 jekyll_repositories:
@@ -47,25 +53,21 @@ jekyll_repositories:
 
 | Variable | Default |
 |----------|---------|
-| `__jekyll_bundler_bin` | `bundle` |
 
 ## FreeBSD
 
 | Variable | Default |
 |----------|---------|
-| `__jekyll_bundler_bin` | `bundle` |
 
 ## OpenBSD
 
 | Variable | Default |
 |----------|---------|
-| `__jekyll_bundler_bin` | `bundle25` |
 
 ## RedHat
 
 | Variable | Default |
 |----------|---------|
-| `__jekyll_bundler_bin` | `bundle` |
 
 # Dependencies
 
@@ -132,12 +134,11 @@ jekyll_repositories:
         - ruby-devel
     jekyll_extra_packages: "{{ os_jekyll_extra_packages[ansible_os_family] }}"
     jekyll_user: vagrant
-    os_jekyll_bundler_bin:
+    project_jekyll_bundler_bin:
       OpenBSD: "bundle{{ language_ruby_version.short }}"
-      Debian: "{{ __jekyll_bundler_bin }}"
-      FreeBSD: "{{ __jekyll_bundler_bin }}"
-      RedHat: "{{ __jekyll_bundler_bin }}"
-    jekyll_bundler_bin: "{{ os_jekyll_bundler_bin[ansible_os_family] }}"
+      Debian: "bundle"
+      FreeBSD: "bundle"
+      RedHat: "bundle"
     jekyll_repositories:
       - name: demo
         module: git
@@ -149,6 +150,11 @@ jekyll_repositories:
           deployment_mode: no
           user_install: yes
           extra_args: ""
+          executable: "{{ project_jekyll_bundler_bin[ansible_os_family] }}"
+      - name: removeme
+        config:
+          dest: /home/vagrant/removeme
+        state: absent
 
     redhat_repo_extra_packages:
       - epel-release
