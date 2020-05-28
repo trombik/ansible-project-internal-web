@@ -20,6 +20,8 @@ addons:
       - qemu-utils
       - ruby-dev
       - jq
+      - aspell
+      - aspell-en
 cache:
   directories:
     - $HOME/.rvm/
