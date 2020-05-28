@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   when "virtualbox"
     config.vm.provider "virtualbox" do |v|
       v.memory = 2048
-      v.cpus = 1
+      v.cpus = 2
     end
     config.vm.box_check_update = false
     default_box = "trombik/ansible-openbsd-6.3-amd64"
