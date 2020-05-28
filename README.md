@@ -5,7 +5,7 @@ This project manages a WWW server at `i.trombik.org`.
 The project is managed by a `Rakefile`, which provides most of common
 operations, such as deploying and testing. Available targets can be shown by:
 
-```
+```console
 bundle exec rake -T
 ```
 
@@ -29,18 +29,18 @@ The `prod` environment is the live, production environment.
 
 To deploy in an environment run `up` and `provision` targets.
 
-```
+```console
 bundle exec rake up provision
 ```
 
 To perform unit tests, run `test:serverspec:all` target.
 
-```
+```console
 bundle exec rake test:serverspec:all
 ```
 
 To perform integration tests, run `test:integration:all` target.
 
-```
+```console
 bundle exec rake test:integration:all
 ```
