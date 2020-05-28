@@ -27,16 +27,15 @@ Optionally:
 
 Install gems in `Gemfile`.
 
-```
+```console
 bundle install
 ```
 
 Install external roles under `roles.galaxy`.
 
-```
+```console
 ansible-galaxy install -r requirements.yml
 ```
-
 
 ## Terminologies
 
@@ -79,12 +78,11 @@ A static test MAY:
 
 ### Destructive tests
 
-
 ## Layout of directories
 
 ### Overview
 
-```
+```console
 ├── inventories # inventory files
 │   ├── prod # for production
 │   └── virtualbox # for virtualbox environment
@@ -150,4 +148,3 @@ specs and helper files.
 #### `serverspec`
 
 #### `integration`
-
