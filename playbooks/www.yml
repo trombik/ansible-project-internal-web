@@ -20,6 +20,6 @@
     - trombik.git
     - users
     - jekyll_directory
-    - trombik.httpd-openbsd
+    - trombik.httpd_openbsd
     - trombik.language_ruby
     - trombik.jekyll
