@@ -21,7 +21,7 @@ end
 
 describe command "ftp -o /dev/null -d http://localhost/" do
   its(:exit_status) { should_not eq 0 }
-  its(:stdout) { should match(/^ftp: Error retrieving file: 410 Gone/) }
+  its(:stdout) { should match(/^ftp: Error retrieving .* 410 Gone/) }
 end
 
 describe user "trombik" do
