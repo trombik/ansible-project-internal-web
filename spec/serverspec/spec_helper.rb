@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "serverspec"
 require "net/ssh/proxy/command"
 require_relative "../spec_helper"
@@ -5,8 +7,8 @@ $LOAD_PATH.unshift(
   Pathname.new(File.dirname(__FILE__)).parent.parent + "ruby" + "lib"
 )
 
-Dir[File.dirname(__FILE__) + "/types/*.rb"].each { |f| require f }
-Dir[File.dirname(__FILE__) + "/shared_examples/*.rb"].each { |f| require f }
+Dir[File.dirname(__FILE__) + "/types/*.rb"].sort.each { |f| require f }
+Dir[File.dirname(__FILE__) + "/shared_examples/*.rb"].sort.each { |f| require f }
 
 host = ENV["TARGET_HOST"]
 
@@ -30,17 +32,17 @@ when "virtualbox"
     keys_only: ssh_options["IdentitiesOnly".downcase],
     verify_host_key: ssh_options["StrictHostKeyChecking".downcase]
   }
-when "staging"
+when "staging", "prod"
   # proxy = Net::SSH::Proxy::Command.new(
   #   'ssh jumpguy@jump.server.enterprise.com nc %h %p'
   # )
   options = {
     host_name: inventory.host(host)["ansible_host"],
     port: 22,
-    user: "ec2-user",
+    user: ENV["PROJECT_USER"] || "ec2-user",
     keys_only: true,
     keys: ["/usr/home/trombik/.ssh/id_rsa-trombik"],
-    verify_host_key: false
+    verify_host_key: :never
   }
 end
 options[:proxy] = proxy if proxy

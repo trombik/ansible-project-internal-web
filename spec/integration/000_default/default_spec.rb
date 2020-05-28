@@ -1,50 +1,30 @@
+# frozen_string_literal: true
+
 require_relative "../spec_helper"
+require "capybara/rspec"
+require "selenium-webdriver"
 
-case test_environment
-when "virtualbox"
-  context "after provision finishes" do
-    all_hosts_in("virtualbox").each do |s|
-      describe s do
-        it "runs `echo foo`" do
-          r = current_server.ssh_exec "echo foo"
-          expect(r).to match(/^foo$/)
-        end
-      end
-    end
-    (all_hosts_in("ns") + all_hosts_in("client")).each do |s|
-      describe s do
-        let(:dig_command) do
-          case current_server.ssh_exec "uname -s".chomp
-          when /FreeBSD/
-            "drill -t"
-          when /OpenBSD/
-            "dig"
-          else
-            raise "Unknown OS"
-          end
-        end
+Capybara.configure do |config|
+  config.run_server = false
+  config.app_host = "http://demo.i.trombik.org"
+  config.server_host = "172.16.100.254"
+end
 
-        it "has a list of internal DNS server in /etc/resolv.conf" do
-          r = current_server.ssh_exec "cat /etc/resolv.conf"
-          all_hosts_in("ns").each do |ns_server|
-            expect(r).to match(/^nameserver\s+#{ns_server.server.address}$/)
-          end
-        end
+# see https://docs.travis-ci.com/user/chrome#capybara
+Capybara.register_driver :chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new(args: %w[no-sandbox headless disable-gpu])
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
 
-        it "resolves internal-only A RRs" do
-          yaml = YAML.load_file(playbooks_path + "group_vars" + "#{test_environment}.yml")
-          expect(yaml["project_hosts"].length).not_to eq 0
-          yaml["project_hosts"].each do |host|
-            r = current_server.ssh_exec "#{dig_command} #{host['name']}.i.trombik.org"
-            expect(r).to match(/^;; ANSWER SECTION:\n#{host['name']}\.i\.trombik\.org\.\s+86400\s+IN\s+A\s+#{host['ipv4']}$/)
-          end
-        end
+Capybara.default_driver = :chrome
+Capybara.javascript_driver = :chrome
 
-        it "resolves external RR over TCP" do
-          r = current_server.ssh_exec "#{dig_command} a example.org"
-          expect(r).to match(/(rcode|status): NOERROR/)
-        end
-      end
+feature "Shows the top page" do
+  describe "/" do
+    it "returns the top page" do
+      visit "/"
+
+      expect(page).to have_content("Makers Guesthouse Portal")
     end
   end
 end
