@@ -82,5 +82,6 @@ script:
   # run yamllint
   - yamllint -c .yamllint.yml .
 
-  # run the test
-  - bundle exec rake test
+  # run the test with 20 minutes timeout
+  # https://docs.travis-ci.com/user/common-build-problems/#build-times-out-because-no-output-was-received
+  - travis_wait 20 bundle exec rake test
