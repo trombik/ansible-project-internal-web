@@ -54,6 +54,9 @@ install:
   # Install ansible
   - pip install ansible yamllint molecule docker
 
+  # Install npm packages
+  - npm install
+
   # Check versions
   - ansible --version
   - molecule --version
