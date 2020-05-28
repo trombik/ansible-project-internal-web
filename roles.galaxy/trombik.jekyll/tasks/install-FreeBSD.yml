@@ -1,0 +1,6 @@
+---
+
+- name: Install jekyll_extra_packages
+  pkgng:
+    name: "{{ jekyll_extra_packages }}"
+    state: present

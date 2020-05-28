@@ -1,0 +1,15 @@
+---
+
+- name: Rebuild jekyll_repositories
+  command: "{{ item.bundler.executable | default('bundle') }} exec jekyll build"
+  args:
+    chdir: "{{ item.config.dest }}"
+  become: yes
+  become_user: "{{ jekyll_user }}"
+  environment:
+    # XXX workaround for `jekyll: command not found`
+    # XXX find out where `~/bin` is set on CentOS
+    PATH: "{{ ansible_env.PATH }}{% if ansible_os_family == 'RedHat' %}:~/bin{% endif %}"
+  with_items: "{{ jekyll_repositories }}"
+  when:
+    - "('state' in item and item.state == 'present') or (not 'state' in item )"

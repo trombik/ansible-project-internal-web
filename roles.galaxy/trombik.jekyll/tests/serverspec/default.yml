@@ -1,0 +1,90 @@
+---
+- hosts: localhost
+  roles:
+    - role: trombik.git
+    - role: trombik.language_ruby
+    - role: trombik.bundler
+    - role: trombik.redhat_repo
+      when: ansible_os_family == 'RedHat'
+    - role: ansible-role-jekyll
+  pre_tasks:
+    - name: Dump all hostvars
+      debug:
+        var: hostvars[inventory_hostname]
+  post_tasks:
+    - name: List all services (systemd)
+      # workaround ansible-lint: [303] service used in place of service module
+      shell: "echo; systemctl list-units --type service"
+      changed_when: false
+      when:
+        # in docker, init is not systemd
+        - ansible_virtualization_type != 'docker'
+        - ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+    - name: list all services (FreeBSD service)
+      # workaround ansible-lint: [303] service used in place of service module
+      shell: "echo; service -l"
+      changed_when: false
+      when:
+        - ansible_os_family == 'FreeBSD'
+  vars:
+    os_language_ruby_package:
+      FreeBSD: "{{ __language_ruby_package }}"
+      # XXX ruby26 for OpenBSD 6.5 does not have bundler
+      OpenBSD: "{% if ansible_distribution_version is version_compare('6.6', '>=') %}ruby%2.6{% else %}ruby%2.5{% endif %}"
+      Debian: "{{ __language_ruby_package }}"
+      RedHat: "{{ __language_ruby_package }}"
+    language_ruby_package: "{{ os_language_ruby_package[ansible_os_family] }}"
+
+    os_bundler_package:
+      FreeBSD: "{{ __bundler_package }}"
+      OpenBSD: "ruby{{ language_ruby_version.short }}-bundler"
+      Debian: "{{ __bundler_package }}"
+      RedHat: "{{ __bundler_package }}"
+    bundler_package: "{{ os_bundler_package[ansible_os_family] }}"
+
+    os_branch:
+      FreeBSD: demo
+      OpenBSD: demo_bundler_1_2
+      Debian: demo_bundler_1_2
+      RedHat: demo_bundler_1_2
+
+    os_jekyll_extra_packages:
+      FreeBSD: []
+      OpenBSD: []
+      Debian:
+        - ruby-dev
+      RedHat:
+        - gcc-c++
+        - ruby-devel
+    jekyll_extra_packages: "{{ os_jekyll_extra_packages[ansible_os_family] }}"
+    jekyll_user: vagrant
+    project_jekyll_bundler_bin:
+      OpenBSD: "bundle{{ language_ruby_version.short }}"
+      Debian: "bundle"
+      FreeBSD: "bundle"
+      RedHat: "bundle"
+    jekyll_repositories:
+      - name: demo
+        module: git
+        config:
+          accept_hostkey: yes
+          repo: https://github.com/trombik/startbootstrap-coming-soon.git
+          dest: /home/vagrant/demo
+          version: "{{ os_branch[ansible_os_family] }}"
+        bundler:
+          deployment_mode: no
+          user_install: yes
+          extra_args: ""
+          executable: "{{ project_jekyll_bundler_bin[ansible_os_family] }}"
+      - name: removeme
+        config:
+          dest: /home/vagrant/removeme
+        state: absent
+
+    redhat_repo_extra_packages:
+      - epel-release
+    redhat_repo:
+      epel:
+        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_architecture }}"
+        gpgcheck: yes
+        enabled: yes

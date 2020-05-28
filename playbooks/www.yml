@@ -18,3 +18,8 @@
     - trombik.vim
     - trombik.zsh
     - trombik.git
+    - users
+    - jekyll_directory
+    - trombik.httpd_openbsd
+    - trombik.language_ruby
+    - trombik.jekyll
