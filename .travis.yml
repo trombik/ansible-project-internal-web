@@ -52,6 +52,9 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install virtualbox-6.1
 
+  # Create dummy ansible_vault_key
+  - echo 0000000000000000000000000000000000000000000000000000000000000000 > ${HOME}/.ansible_vault_key
+
 install:
   # Install ansible
   - pip install ansible yamllint molecule docker
